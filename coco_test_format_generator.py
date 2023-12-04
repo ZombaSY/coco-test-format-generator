@@ -7,9 +7,12 @@ import numpy as np
 rootDircetory = '/PATH/TO/ROOT/'
 testPath = 'ImagePath'
 categories = ['cat1', 'cat2', 'cat3', 'cat4', 'cat5']
+ensuredFormat = ['.png', '.jpg']
 
 
+# https://stackoverflow.com/questions/50916422/python-typeerror-object-of-type-int64-is-not-json-serializable
 class NpEncoder(json.JSONEncoder):
+
     def default(self, obj):
         if isinstance(obj, np.integer):
             return int(obj)
@@ -24,7 +27,7 @@ def process_wrapper(args):
     return multi_process(*args)
 
 def multi_process(image_path, idx):
-    img = cv2.imread(image_path)    # you can use other pacakages to get image's width and height
+    img = cv2.imread(image_path)    # you can use other pacakages to get image's width and height for better performance.
     directory, fn = os.path.split(image_path)
     directory = directory.replace(os.path.join(rootDircetory, testPath), '')[1:]
     coco_dict = {'file_name': os.path.join(directory, fn),
@@ -36,7 +39,7 @@ def multi_process(image_path, idx):
 
 
 def is_image(fn):
-    return True if os.path.splitext(os.path.split(fn)[-1])[1].lower() in ['.png', '.jpg'] else False    
+    return True if os.path.splitext(os.path.split(fn)[-1])[1].lower() in ensuredFormat else False    
 
 
 def main():
